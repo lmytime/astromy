@@ -14,15 +14,15 @@ from setuptools import find_packages, setup, Command
 # Package meta-data.
 NAME = 'astromy'
 DESCRIPTION = 'Python libary for analysis of astronomy data.'
-URL = 'https://github.com/me/myproject'
+URL = 'https://github.com/lmytime/astromy'
 EMAIL = 'lmytime@hotmail.com'
 AUTHOR = 'Mingyu Li'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.0.1'
+VERSION = '0.0.3'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    # 'requests', 'maya', 'records',
+    'astropy', 'numpy', 'matplotlib', 'pandas',
 ]
 
 # What packages are optional?
