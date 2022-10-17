@@ -1,5 +1,6 @@
 import warnings
 # warnings.filterwarnings("ignore")
+from copy import deepcopy
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,8 +10,8 @@ from astropy.io import fits
 from astropy.nddata.utils import Cutout2D
 from astropy.wcs import WCS
 from astropy.wcs.utils import proj_plane_pixel_scales
-
-
+from wcs import transform_wcs
+from reproject import reproject_interp, reproject_exact, reproject_adaptive
 
 def zscale(img):
     """
@@ -97,14 +98,22 @@ class AstroImage:
 
     @property
     def skycenter(self):
-        ra, dec = self.wcs.wcs_pix2world(*self.pixcenter, 0)
-        return tuple([ra, dec])
+        ra, dec = np.array(self.wcs.wcs_pix2world(*self.pixcenter, 0))
+        return ra, dec
 
     @property
     def pixcenter(self):
         x, y = self.shape
         x, y = (x-1)/2, (y-1)/2
         return x, y
+
+    @property
+    def hdu(self):
+        return fits.ImageHDU(data=self.data, header=self.header)
+
+    @property
+    def footprint(self):
+        return AstroImage(data=(~np.isnan(self.data)).astype(float), header=self.header)
 
     def __repr__(self, plot=True):
         __info__ = """
@@ -121,7 +130,7 @@ class AstroImage:
         return __info__
 
     def save(self, url):
-        hdu = fits.PrimaryHDU(self.data, header=self.hdr)
+        hdu = fits.PrimaryHDU(self.data, header=self.header)
         hdu.writeto(url, overwrite=True)
 
     def preview(self, color_map='gray_r', gamma=1.0, colorbar=True, **kwargs):
@@ -151,6 +160,21 @@ class AstroImage:
         wcs_crop = hdu_crop.wcs
         self.header.update(wcs_crop.to_header())
         return AstroImage(data=hdu_crop.data, header=self.header)
+
+    def rotate(self, angle, algorithm='interpolation'):
+        input_wcs = deepcopy(self.wcs)
+        input_wcs.wcs.crpix = self.pixcenter
+        input_wcs.wcs.crval = self.skycenter
+        output_wcs = transform_wcs(input_wcs, rotation=np.deg2rad(angle))
+        if(algorithm == 'interpolation'):
+            data = reproject_interp(self.hdu, output_wcs, shape_out=np.array(self.shape), return_footprint=False)
+        elif(algorithm == 'exact'):
+            data = reproject_exact(self.hdu, output_wcs, shape_out=np.array(self.shape), return_footprint=False)
+        elif(algorithm == 'adaptive'):
+            data = reproject_adaptive(self.hdu, output_wcs, shape_out=np.array(self.shape), return_footprint=False, conserve_flux=True)
+        else:
+            raise ValueError('Algorithm not supported')
+        return AstroImage(data=data, header=output_wcs.to_header())
 
     def mask_blank(self, threshold=10000):
         '''
