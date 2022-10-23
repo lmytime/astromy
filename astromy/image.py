@@ -10,8 +10,10 @@ from astropy.io import fits
 from astropy.nddata.utils import Cutout2D
 from astropy.wcs import WCS
 from astropy.wcs.utils import proj_plane_pixel_scales
-from wcs import transform_wcs
-from reproject import reproject_interp, reproject_exact, reproject_adaptive
+from reproject import reproject_adaptive, reproject_exact, reproject_interp
+
+from .wcs import transform_wcs
+
 
 def zscale(img):
     """
@@ -20,7 +22,8 @@ def zscale(img):
 
     Return a Normalization class to be used with Matplotlib.
     """
-    from astropy.visualization import ImageNormalize, LinearStretch, ZScaleInterval
+    from astropy.visualization import (ImageNormalize, LinearStretch,
+                                       ZScaleInterval)
     norm = ImageNormalize(img, interval=ZScaleInterval(),
                           stretch=LinearStretch())
     return norm
@@ -43,12 +46,12 @@ def gamma_correction(colorbar, gamma=1.0):
 
 # build RGB image.
 def combine_RGB(b, g, r, fwhm=2, Q=10, stretch=0.05, filename=None):
-    from astropy.visualization import make_lupton_rgb
     from astropy.convolution import Gaussian2DKernel, convolve
     from astropy.stats import gaussian_fwhm_to_sigma
+    from astropy.visualization import make_lupton_rgb
 
     sigma = fwhm * gaussian_fwhm_to_sigma
-    kernel = Gaussian2DKernel(sigma, x_size=10, y_size=10)
+    kernel = Gaussian2DKernel(sigma, x_size=11, y_size=11)
     g = convolve(g, kernel, normalize_kernel=True)
     r = convolve(r, kernel, normalize_kernel=True)
     b = convolve(b, kernel, normalize_kernel=True)
