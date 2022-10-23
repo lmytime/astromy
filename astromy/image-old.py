@@ -18,6 +18,7 @@ from astropy.stats import SigmaClip
 
 
 
+
 def zscale(img):
     """
     Normalization of zscale.
@@ -77,7 +78,7 @@ def plot_beam(ax, header, xy=(2,2)):
 class AstroImage:
     def __init__(self):
         pass
-    
+
     @classmethod
     def read(cls, url, ext):
         with fits.open(self.url) as hdulist:
