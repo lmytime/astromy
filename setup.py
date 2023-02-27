@@ -13,16 +13,17 @@ from setuptools import find_packages, setup, Command
 
 # Package meta-data.
 NAME = 'astromy'
-DESCRIPTION = 'Python libary for analysis of astronomy data.'
+DESCRIPTION = 'Astronomy data analysis package.'
 URL = 'https://github.com/lmytime/astromy'
 EMAIL = 'lmytime@hotmail.com'
 AUTHOR = 'Mingyu Li'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.0.3'
+# VERSION from __version__.py
+VERSION = None
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    'astropy', 'numpy', 'matplotlib', 'pandas',
+    'astropy', 'numpy', 'matplotlib', 'pandas', 'regions', 'getpass', 'spectral_cube', 'scipy', 'reproject'
 ]
 
 # What packages are optional?

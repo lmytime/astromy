@@ -161,8 +161,7 @@ class AstroImage:
         hdu_crop = Cutout2D(self.data, position=coord, size=size,
                             wcs=self.wcs, mode=mode)
         wcs_crop = hdu_crop.wcs
-        self.header.update(wcs_crop.to_header())
-        return AstroImage(data=hdu_crop.data, header=self.header)
+        return AstroImage(data=hdu_crop.data, header=wcs_crop.to_header())
 
     def rotate(self, angle, algorithm='interpolation'):
         input_wcs = deepcopy(self.wcs)

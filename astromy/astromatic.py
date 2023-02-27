@@ -9,7 +9,7 @@
 
 from astropy.io import fits
 from astropy.wcs import WCS
-from astrolib.astro_image import AstroImage
+from .image import AstroImage
 import getpass
 import subprocess
 import os, time
