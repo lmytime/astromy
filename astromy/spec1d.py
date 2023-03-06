@@ -68,4 +68,3 @@ class Astro1dSpec:
             col3 = fits.Column(name='error', format='D', array=self.err)
             hdu = fits.BinTableHDU.from_columns([col1, col2, col3])
             hdu.writeto(url, overwrite=overwrite)
-            
